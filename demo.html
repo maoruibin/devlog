@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1200, initial-scale=1.0">
-    <title>devlog - 开发者日志工具</title>
+    <meta name="viewport" content="width=1400, initial-scale=1.0">
+    <title>devlog - Claude Code 技能</title>
     <style>
         * {
             margin: 0;
@@ -11,8 +11,8 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'JetBrains Mono', monospace;
+            background: #0d1117;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -20,299 +20,465 @@
             padding: 40px;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             width: 100%;
         }
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+        }
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .badge {
+            background: rgba(124, 77, 255, 0.15);
+            border: 1px solid rgba(124, 77, 255, 0.4);
+            color: #a78bfa;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: #7c4dff;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         .header h1 {
-            font-size: 48px;
+            font-size: 52px;
             color: #fff;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             letter-spacing: -2px;
+        }
+        .header h1 span {
+            background: linear-gradient(135deg, #7c4dff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .header .subtitle {
             font-size: 18px;
-            color: #8892b0;
+            color: #7d8590;
+            margin-bottom: 20px;
         }
-        .header .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            padding: 6px 16px;
-            border-radius: 20px;
+        .header .tagline {
+            color: #484f58;
             font-size: 14px;
-            margin-top: 15px;
+        }
+        .tagline a {
+            color: #7c4dff;
+            text-decoration: none;
         }
         .demo-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
         }
         .window {
-            background: #1e1e1e;
+            background: #161b22;
+            border: 1px solid #30363d;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
         .window-header {
-            background: #2d2d2d;
+            background: #0d1117;
             padding: 12px 16px;
             display: flex;
             align-items: center;
             gap: 8px;
+            border-bottom: 1px solid #30363d;
         }
         .window-dot {
-            width: 12px;
-            height: 12px;
+            width: 11px;
+            height: 11px;
             border-radius: 50%;
         }
-        .window-dot.red { background: #ff5f56; }
-        .window-dot.yellow { background: #ffbd2e; }
-        .window-dot.green { background: #27c93f; }
+        .window-dot.red { background: #ff5f57; }
+        .window-dot.yellow { background: #febc2e; }
+        .window-dot.green { background: #28c840; }
         .window-title {
-            color: #888;
+            color: #7d8590;
             font-size: 13px;
             margin-left: 10px;
+            flex: 1;
         }
         .window-body {
             padding: 20px;
-            color: #e0e0e0;
             font-size: 14px;
-            line-height: 1.8;
+            line-height: 1.7;
+        }
+        /* Claude Code 对话窗口 */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-message {
+            display: flex;
+            gap: 12px;
+        }
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .avatar.ai {
+            background: linear-gradient(135deg, #7c4dff 0%, #00d4ff 100%);
+        }
+        .avatar.user {
+            background: #30363d;
+        }
+        .message-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+        }
+        .chat-message.ai .message-bubble {
+            background: rgba(124, 77, 255, 0.1);
+            border: 1px solid rgba(124, 77, 255, 0.2);
+        }
+        .chat-message.user .message-bubble {
+            background: #21262d;
+            border: 1px solid #30363d;
+        }
+        .message-label {
+            font-size: 11px;
+            color: #7d8590;
+            margin-bottom: 4px;
+        }
+        .message-text {
+            color: #e6edf3;
+        }
+        .message-text .highlight {
+            color: #7c4dff;
+            font-weight: 500;
+        }
+        .message-text .code {
+            background: #0d1117;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #a5d6ff;
+        }
+        .success-box {
+            background: rgba(46, 160, 67, 0.15);
+            border: 1px solid rgba(46, 160, 67, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        .success-box .icon {
+            color: #3fb950;
+        }
+        .success-box .text {
+            color: #7ee787;
+            font-size: 13px;
+        }
+        .success-box .path {
+            color: #7d8590;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        /* 终端窗口 */
+        .terminal-line {
+            margin-bottom: 8px;
         }
         .prompt {
-            color: #61afef;
+            color: #7c4dff;
         }
         .prompt::before {
             content: "$ ";
-            color: #61afef;
         }
         .comment {
-            color: #5c6370;
+            color: #7d8590;
         }
         .cmd {
-            color: #98c379;
+            color: #e6edf3;
         }
         .arg {
-            color: #e5c07b;
+            color: #ffa657;
         }
         .string {
-            color: #c678dd;
+            color: #a5d6ff;
         }
         .output {
-            color: #abb2bf;
+            color: #7d8590;
         }
-        .success {
-            color: #98c379;
-        }
-        .error {
-            color: #e06c75;
-        }
-        .emoji {
-            display: inline-block;
-        }
+        /* 周报窗口 */
         .full-width {
             grid-column: 1 / -1;
         }
         .weekly-report {
-            background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+            background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 25px;
         }
         .report-title {
-            color: #61afef;
-            font-size: 16px;
-            margin-bottom: 20px;
-            text-align: center;
+            color: #7c4dff;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .report-subtitle {
+            color: #7d8590;
+            font-size: 12px;
         }
         .report-divider {
-            color: #61afef;
+            color: #30363d;
             margin-bottom: 20px;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
         }
         .category {
-            margin-bottom: 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            padding: 16px;
         }
         .category-header {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         .category-emoji {
             font-size: 18px;
         }
         .category-name {
-            color: #e5c07b;
-            font-weight: 600;
+            color: #e6edf3;
+            font-size: 14px;
+            font-weight: 500;
         }
         .category-count {
-            color: #5c6370;
+            color: #7d8590;
             font-size: 12px;
+            margin-left: auto;
         }
         .report-item {
-            color: #abb2bf;
-            padding-left: 20px;
-            margin-bottom: 8px;
+            color: #7d8590;
+            font-size: 13px;
+            padding: 6px 0;
+            padding-left: 14px;
+            border-left: 2px solid #30363d;
         }
-        .report-detail {
-            color: #5c6370;
+        .report-item.detail {
             font-size: 12px;
-            padding-left: 30px;
+            color: #484f58;
+            margin-top: 4px;
         }
         .report-footer {
-            color: #5c6370;
-            border-top: 1px solid #2d2d2d;
-            padding-top: 15px;
-            margin-top: 20px;
             text-align: center;
-            font-size: 12px;
+            padding: 20px;
+            border-top: 1px solid #30363d;
+            margin-top: 10px;
         }
-        .feature-grid {
+        .report-footer .dates {
+            color: #7d8590;
+            font-size: 13px;
+        }
+        .report-footer .stats {
+            color: #7c4dff;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+        /* 特性网格 */
+        .features {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-top: 30px;
         }
         .feature {
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 16px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
         }
         .feature-icon {
             font-size: 24px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
-        .feature-text {
-            color: #8892b0;
-            font-size: 12px;
+        .feature-title {
+            color: #e6edf3;
+            font-size: 13px;
+            margin-bottom: 4px;
         }
+        .feature-desc {
+            color: #7d8590;
+            font-size: 11px;
+        }
+        /* 安装区域 */
         .install-section {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            background: rgba(124, 77, 255, 0.08);
+            border: 1px solid rgba(124, 77, 255, 0.2);
             border-radius: 12px;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
             margin-top: 30px;
         }
-        .install-section code {
-            background: #1e1e1e;
-            padding: 12px 20px;
-            border-radius: 6px;
-            color: #98c379;
+        .install-title {
+            color: #a78bfa;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .install-code {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            padding: 14px 24px;
+            border-radius: 8px;
+            color: #7ee787;
             font-size: 14px;
             display: inline-block;
-            margin-top: 10px;
         }
         .github-link {
-            display: inline-block;
-            color: #61afef;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #7c4dff;
             text-decoration: none;
             font-size: 14px;
-            margin-top: 15px;
+            margin-top: 16px;
         }
-        .log-entry {
-            background: rgba(255,255,255,0.03);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-left: 3px solid #61afef;
-        }
-        .log-time {
-            color: #5c6370;
-            font-size: 12px;
-        }
-        .log-title {
-            color: #e5c07b;
-            margin-top: 4px;
-        }
-        .log-detail {
-            color: #abb2bf;
-            font-size: 12px;
-            margin-top: 6px;
-            padding-left: 12px;
-            border-left: 2px solid #2d2d2d;
+        .github-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>devlog</h1>
-            <p class="subtitle">开发者的第二大脑——结构化工作日志，一键生成周报</p>
-            <span class="badge">🚀 v1.0</span>
+            <div class="badge-row">
+                <span class="badge"><span class="badge-dot"></span>Claude Code 技能</span>
+                <span class="badge">🚀 Vibe Coding 时代</span>
+            </div>
+            <h1>dev<span>log</span></h1>
+            <p class="subtitle">让 AI 帮你记录每一天的工作</p>
+            <p class="tagline">对话即记录 · 结构化存储 · 一键周报</p>
         </div>
 
         <div class="demo-grid">
-            <!-- 左侧：命令演示 -->
+            <!-- 左侧：Claude Code 对话演示 -->
             <div class="window">
                 <div class="window-header">
                     <span class="window-dot red"></span>
                     <span class="window-dot yellow"></span>
                     <span class="window-dot green"></span>
-                    <span class="window-title">Terminal - devlog</span>
+                    <span class="window-title">Claude Code</span>
                 </div>
                 <div class="window-body">
-                    <div class="comment"># 安装</div>
-                    <div class="line"><span class="prompt">git clone https://github.com/maoruibin/devlog.git</span></div>
-                    <div class="line"><span class="prompt">export PATH="$PATH:$HOME/.claude/skills/devlog"</span></div>
-                    <div class="line"></div>
+                    <div class="chat-container">
+                        <div class="chat-message user">
+                            <div class="avatar user">👤</div>
+                            <div>
+                                <div class="message-bubble">
+                                    <div class="message-label">你</div>
+                                    <div class="message-text">帮我看看这个登录 token 过期的问题</div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="comment"># 记录线上故障</div>
-                    <div class="line"><span class="prompt">devlog incident <span class="string">"首页Crash"</span> <span class="arg">-d</span> <span class="string">"NPE in FeedAdapter，已修复"</span></span></div>
-                    <div class="line"></div>
+                        <div class="chat-message ai">
+                            <div class="avatar ai">🤖</div>
+                            <div>
+                                <div class="message-bubble">
+                                    <div class="message-label">Claude</div>
+                                    <div class="message-text">
+                                        找到问题了！<span class="highlight">Token 的过期时间判断逻辑有误</span>。
+                                        <br><br>
+                                        在 <span class="code">TokenValidator.java:47</span>，应该用
+                                        <span class="code">System.currentTimeMillis()</span> 而不是
+                                        <span class="code">token.getIssuedAt()</span> 来判断。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="comment"># 记录技术方案（项目本地）</div>
-                    <div class="line"><span class="prompt">devlog design <span class="string">"缓存策略"</span> <span class="arg">--here</span></span></div>
-                    <div class="line"></div>
+                        <div class="chat-message user">
+                            <div class="avatar user">👤</div>
+                            <div>
+                                <div class="message-bubble">
+                                    <div class="message-label">你</div>
+                                    <div class="message-text">记一下这个 Bug</div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="comment"># 查看今日日志</div>
-                    <div class="line"><span class="prompt">devlog list</span></div>
-                    <div class="line"></div>
-
-                    <div class="comment"># 生成周报</div>
-                    <div class="line"><span class="prompt">devlog weekly</span></div>
+                        <div class="chat-message ai">
+                            <div class="avatar ai">🤖</div>
+                            <div>
+                                <div class="message-bubble">
+                                    <div class="message-label">Claude</div>
+                                    <div class="success-box">
+                                        <div class="icon">✅ 已归档</div>
+                                        <div class="text">🏷️ BUG - 修复登录 token 过期问题</div>
+                                        <div class="path">📂 ~/devlog/2025-01-21.md</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- 右侧：日志输出 -->
+            <!-- 右侧：终端命令 -->
             <div class="window">
                 <div class="window-header">
                     <span class="window-dot red"></span>
                     <span class="window-dot yellow"></span>
                     <span class="window-dot green"></span>
-                    <span class="window-title">2025-01-21.md</span>
+                    <span class="window-title">Terminal</span>
                 </div>
                 <div class="window-body">
-                    <div style="color: #61afef; margin-bottom: 15px;"># 📅 2025-01-21 Work Log</div>
+                    <div class="terminal-line"><span class="comment"># 安装技能</span></div>
+                    <div class="terminal-line"><span class="prompt">git clone https://github.com/maoruibin/devlog.git</span></div>
+                    <div class="terminal-line"><span class="prompt">export PATH="$PATH:$HOME/.claude/skills/devlog"</span></div>
+                    <div class="terminal-line"></div>
 
-                    <div class="log-entry">
-                        <div class="log-time">[14:30]  @my-project</div>
-                        <div class="log-title">🚨 INCIDENT: 修复首页 Crash</div>
-                        <div class="log-detail">
-                            Root Cause: NPE in FeedAdapter.notifyDataSetChanged()<br>
-                            Fix: 添加空值检查，已提交 PR #123
-                        </div>
-                    </div>
+                    <div class="terminal-line"><span class="comment"># 生成周报</span></div>
+                    <div class="terminal-line"><span class="prompt">devlog weekly</span></div>
+                    <div class="terminal-line"></div>
 
-                    <div class="log-entry" style="border-left-color: #e5c07b;">
-                        <div class="log-time">[11:15]  @my-project</div>
-                        <div class="log-title">📐 DESIGN: Feed 缓存策略方案</div>
-                        <div class="log-detail">
-                            采用 Cache-Aside + TTL 随机化防止雪崩
-                        </div>
-                    </div>
-
-                    <div class="log-entry" style="border-left-color: #98c379;">
-                        <div class="log-time">[09:30]  @my-project</div>
-                        <div class="log-title">✨ FEAT: 完成用户登录功能</div>
-                    </div>
+                    <div class="terminal-line"><span class="output">📊 周 报 / Weekly Report</span></div>
+                    <div class="terminal-line"><span class="output">═════════════════════════════</span></div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="output">📐 技术方案 (2)</span></div>
+                    <div class="terminal-line"><span class="output">  • 用户中心重构</span></div>
+                    <div class="terminal-line"><span class="output">  • 缓存策略设计</span></div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="output">🐛 常规 Bug (3)</span></div>
+                    <div class="terminal-line"><span class="output">  • 登录 token 过期</span></div>
+                    <div class="terminal-line"><span class="output">  • 点赞数不刷新</span></div>
+                    <div class="terminal-line"><span class="output">  • 首页 Crash</span></div>
                 </div>
             </div>
 
-            <!-- 底部：周报演示 -->
+            <!-- 底部：完整周报 -->
             <div class="window full-width weekly-report">
                 <div class="window-header">
                     <span class="window-dot red"></span>
@@ -321,103 +487,95 @@
                     <span class="window-title">Weekly Report</span>
                 </div>
                 <div class="window-body">
-                    <div class="report-title">📊 周 报 / Weekly Report</div>
-                    <div class="report-divider">══════════════════════════════════════════════════</div>
+                    <div class="report-header">
+                        <div class="report-title">📊 周 报 / Weekly Report</div>
+                        <div class="report-subtitle">Vibe Coding 时代，让 AI 帮你记住每一天</div>
+                    </div>
+                    <div class="report-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
 
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+                    <div class="report-grid">
                         <div class="category">
                             <div class="category-header">
                                 <span class="category-emoji">🚨</span>
                                 <span class="category-name">线上故障</span>
-                                <span class="category-count">(1)</span>
+                                <span class="category-count">1</span>
                             </div>
-                            <div class="report-item">• 修复首页 Crash</div>
-                            <div class="report-detail">NPE in FeedAdapter，添加空值检查</div>
+                            <div class="report-item">支付服务超时</div>
+                            <div class="report-item detail">数据库连接池耗尽，已扩容</div>
                         </div>
 
                         <div class="category">
                             <div class="category-header">
                                 <span class="category-emoji">📐</span>
                                 <span class="category-name">技术方案</span>
-                                <span class="category-count">(2)</span>
+                                <span class="category-count">2</span>
                             </div>
-                            <div class="report-item">• Feed 缓存策略方案</div>
-                            <div class="report-item">• 用户中心重构设计</div>
+                            <div class="report-item">用户中心重构</div>
+                            <div class="report-item">Feed 缓存策略</div>
                         </div>
 
                         <div class="category">
                             <div class="category-header">
                                 <span class="category-emoji">✨</span>
                                 <span class="category-name">业务需求</span>
-                                <span class="category-count">(3)</span>
+                                <span class="category-count">3</span>
                             </div>
-                            <div class="report-item">• 完成用户登录功能</div>
-                            <div class="report-item">• 评论点赞功能</div>
-                            <div class="report-item">• 个人中心改版</div>
+                            <div class="report-item">用户登录功能</div>
+                            <div class="report-item">评论点赞</div>
+                            <div class="report-item">个人中心改版</div>
                         </div>
 
                         <div class="category">
                             <div class="category-header">
                                 <span class="category-emoji">🐛</span>
                                 <span class="category-name">常规 Bug</span>
-                                <span class="category-count">(2)</span>
+                                <span class="category-count">3</span>
                             </div>
-                            <div class="report-item">• 修复点赞数不刷新</div>
-                            <div class="report-item">• 修复登录 token 过期</div>
-                        </div>
-
-                        <div class="category">
-                            <div class="category-header">
-                                <span class="category-emoji">🔧</span>
-                                <span class="category-name">运维部署</span>
-                                <span class="category-count">(1)</span>
-                            </div>
-                            <div class="report-item">• 配置中心变更</div>
-                        </div>
-
-                        <div class="category">
-                            <div class="category-header">
-                                <span class="category-emoji">📚</span>
-                                <span class="category-name">技术调研</span>
-                                <span class="category-count">(1)</span>
-                            </div>
-                            <div class="report-item">• Rust 异步编程学习</div>
+                            <div class="report-item">登录 token 过期</div>
+                            <div class="report-item">点赞数不刷新</div>
+                            <div class="report-item">首页 Crash</div>
                         </div>
                     </div>
 
                     <div class="report-footer">
-                        📅 2025-01-15 ~ 2025-01-21  ·  共 5 天有记录  ·  10 条工作日志
+                        <div class="dates">📅 2025-01-15 ~ 2025-01-21</div>
+                        <div class="stats">共 5 天有记录 · 9 条工作日志 · 对话即工作，工作留痕迹</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 特性展示 -->
-        <div class="feature-grid">
+        <!-- 特性 -->
+        <div class="features">
             <div class="feature">
-                <div class="feature-icon">⚡</div>
-                <div class="feature-text">3秒快速记录</div>
+                <div class="feature-icon">💬</div>
+                <div class="feature-title">对话触发</div>
+                <div class="feature-desc">自然语言，无需打断流程</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🏷️</div>
+                <div class="feature-title">AI 分类</div>
+                <div class="feature-desc">自动识别 6 种工作类型</div>
             </div>
             <div class="feature">
                 <div class="feature-icon">📁</div>
-                <div class="feature-text">灵活存储策略</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🔄</div>
-                <div class="feature-text">智能去重</div>
+                <div class="feature-title">灵活存储</div>
+                <div class="feature-desc">全局 + 项目本地双模式</div>
             </div>
             <div class="feature">
                 <div class="feature-icon">📊</div>
-                <div class="feature-text">一键周报</div>
+                <div class="feature-title">一键周报</div>
+                <div class="feature-desc">自动汇总本周工作</div>
             </div>
         </div>
 
-        <!-- 安装指引 -->
+        <!-- 安装 -->
         <div class="install-section">
-            <div style="color: #8892b0; margin-bottom: 10px;">🚀 一键安装</div>
-            <code>git clone https://github.com/maoruibin/devlog.git ~/.claude/skills/devlog</code>
-            <br>
-            <a href="https://github.com/maoruibin/devlog" class="github-link">⭐ Star on GitHub</a>
+            <div class="install-title">🚀 一键安装 Claude Code 技能</div>
+            <div class="install-code">git clone https://github.com/maoruibin/devlog.git ~/.claude/skills/devlog</div>
+            <a href="https://github.com/maoruibin/devlog" class="github-link">
+                ⭐ Star on GitHub · https://github.com/maoruibin/devlog
+            </a>
         </div>
     </div>
 </body>

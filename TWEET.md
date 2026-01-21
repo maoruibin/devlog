@@ -2,54 +2,60 @@
 
 ---
 
-## 方案1（问题切入）
+## 方案1（问题切入 + Vibe Coding）
 
 ```
-周五写周报时："我这周都干了什么？" 🤔
+Vibe Coding 时代的新问题：
 
-写了个小工具拯救自己：
-- 3秒记录工作内容
-- 自动分类整理
-- 一键生成周报
+和 AI 对话一整天，写了超多代码
+周五写周报时："我这周都干了啥？" 🤦
 
-开源了，欢迎试试 👇
+写了个 Claude Code 技能拯救自己：
+• 对话即记录，无需打断流程
+• AI 自动分类整理
+• 一键生成周报
+
 https://github.com/maoruibin/devlog
 
-#开发者工具 #周报 #Python
+#VibeCoding #ClaudeCode #开发者工具
 ```
 
 ---
 
-## 方案2（功能展示）
+## 方案2（对话演示）
 
 ```
-devlog = 开发者的第二大脑 🧠
+你: 记一下，刚才修复的登录 bug
+AI: ✅ 已归档到 ~/devlog/2025-01-21.md
 
-随手记 → 自动分类 → 周报搞定
+就，这么简单 🎯
 
-devlog incident "首页Crash" -d "Root Cause: NPE..."
-devlog weekly  # 一键生成周报
+给 Claude Code 写了个技能，让 AI 帮你记录工作：
+• 自然对话触发
+• 自动分类存储
+• 一键生成周报
 
 https://github.com/maoruibin/devlog
 
-#开发者 #效率工具 #开源
+#ClaudeCode #AI #开发工具
 ```
 
 ---
 
-## 方案3（极简）
+## 方案3（极简 + 价值）
 
 ```
-周报救星来了 🎯
+周报救星来了 🚀
 
-一个轻量级开发日志工具：
-• 200行 Python
-• 零依赖开箱即用
-• 结构化记录 + 自动周报
+Claude Code 技能：devlog
+让 AI 帮你记录每一天的工作
+
+"记一下，刚才修的那个 Bug"
+✅ 已归档
 
 https://github.com/maoruibin/devlog
 
-#Python #开发者工具
+#VibeCoding #开发者工具 #开源
 ```
 
 ---
@@ -57,41 +63,103 @@ https://github.com/maoruibin/devlog
 ## 方案4（英文版）
 
 ```
-Tired of "what did I do this week?" every Friday?
+Problem with Vibe Coding:
 
-Built a simple dev log tool:
-• Log in 3 seconds
-• Auto-categorize
+Ship tons of code with AI every day
+Friday comes: "What did I do this week?" 🤔
+
+Built a Claude Code skill to fix this:
+• Chat to log, no context switch
+• AI auto-categorizes
 • One-command weekly report
 
 https://github.com/maoruibin/devlog
 
-#DevTools #Productivity
+#VibeCoding #ClaudeCode #DevTools
 ```
 
 ---
 
-## 建议配图
+## 方案5（对比图风格）
 
-1. **终端截图** - 展示 `devlog weekly` 的彩色输出
-2. **周报对比** - 传统手写 vs devlog 生成
-3. **工作流示意图** - 记录 → 分类 → 汇总
-4. **代码截图** - 简洁的命令调用
+```
+传统开发：写代码 → Git commit → 有记录
+Vibe Coding：和 AI 对话 → ??? → 周报空白
+
+devlog = 连接 AI 对话和工作记录
+
+https://github.com/maoruibin/devlog
+
+#ClaudeCode #VibeCoding
+```
+
+---
+
+## 配图建议
+
+### 图片1：对话演示截图
+```
+┌─────────────────────────────────────┐
+│ Claude Code                         │
+├─────────────────────────────────────┤
+│ 你: 帮我看看这个登录 bug             │
+│ AI: [分析代码...]                   │
+│    问题在 token 过期逻辑...          │
+│ 你: 记一下                          │
+│ AI: ✅ 已归档到 ~/devlog/...        │
+└─────────────────────────────────────┘
+```
+
+### 图片2：周报输出
+```
+📊 周 报 / Weekly Report
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📐 技术方案 (2)
+  • 用户中心重构
+  • 缓存策略设计
+
+🐛 常规Bug (3)
+  • 登录 token 过期
+  • 点赞数不刷新
+  • 首页 Crash
+```
+
+### 图片3：工作流图
+```
+和 AI 讨论方案 → "记一下" → 自动归档
+    ↓
+AI 帮忙修 Bug  → "存档"   → 自动分类
+    ↓
+周五生成周报  → 一条命令 → 搞定 ✅
+```
 
 ---
 
 ## 发布建议
 
-| 平台 | 最佳时间 | 建议 |
-|------|----------|------|
-| Twitter | 工作日 9-11点 | 加配图，带话题标签 |
-| V2EX | 工作日 10-11点 | 详细说明，回复评论 |
-| 掘金 | 工作日 18-20点 | 周中阅读量高 |
-| 知乎 | 周末 | 深度讨论 |
+| 时段 | 效果 | 原因 |
+|------|------|------|
+| 工作日 9-11点 | ⭐⭐⭐⭐⭐ | 开发者刚上班，刷 Twitter |
+| 工作日 18-20点 | ⭐⭐⭐⭐ | 下班时间，浏览量高 |
+| 周末 | ⭐⭐⭐ | 有时间深入研究 |
 
 ---
 
-## 话题标签建议
+## 互动建议
 
-中文：#开发者工具 #效率提升 #周报 #Python #开源
-英文：#DevTools #Productivity #Developer #Python #OSS
+**回复话题**：
+- "你用 Claude Code 了吗？"
+- "Vibe Coding 时代你怎么记工作日志？"
+- "周报痛点统一一下 😂"
+
+**引用转发**：
+- @Claude  官方账号
+- Vibe Coding 相关讨论
+
+---
+
+## 话题标签
+
+中文：#VibeCoding #ClaudeCode #开发者工具 #AI辅助开发 #周报
+英文：#VibeCoding #ClaudeCode #DevTools #AI #AssistiveDev
